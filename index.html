@@ -78,7 +78,9 @@
     <p>Already have an account? <a href="login.html">Log in</a></p>
   </div>
 <script type="module">
-  // Your Firebase configuration
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
   const firebaseConfig = {
     apiKey: "AIzaSyAILpDXsC1r4eyntMwD5Z_gLS1Fwcym7Jk",
     authDomain: "serverproject-ae0e2.firebaseapp.com",
