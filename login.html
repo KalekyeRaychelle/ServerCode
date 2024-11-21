@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
+
     <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js"></script>
 
     <title>Login</title>
@@ -125,29 +127,41 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Handle login form submission
-    document.querySelector('form').addEventListener('submit', async function(event) {
-        event.preventDefault();
+document.querySelector('form').addEventListener('submit', async function(event) {
+    event.preventDefault();
 
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
 
-        try {
-            // Get the users collection reference
-            const usersCollection = collection(db, "users");
-            const q = query(usersCollection, where("email", "==", username), where("password", "==", password));
+    try {
+        // Get the users collection reference
+        const usersCollection = collection(db, "users");
+        const q = query(usersCollection, where("email", "==", username));
 
-            const querySnapshot = await getDocs(q);
-            if (querySnapshot.empty) {
-                alert("Invalid username or password. Please try again.");
-            } else {
+        const querySnapshot = await getDocs(q);
+
+        if (querySnapshot.empty) {
+            alert("Invalid username or password. Please try again.");
+        } else {
+            // Assuming only one document per user, we can get the first result
+            const userDoc = querySnapshot.docs[0];
+            const storedHash = userDoc.data().password; // The stored hashed password in Firestore
+
+            // Compare the entered password with the stored hashed password
+            const isPasswordCorrect = await bcrypt.compare(password, storedHash);
+
+            if (isPasswordCorrect) {
                 alert("Login successful!");
                 window.location.href = 'home.html';
+            } else {
+                alert("Invalid username or password. Please try again.");
             }
-        } catch (error) {
-            console.error("Error fetching data:", error);
         }
-    });
+    } catch (error) {
+        console.error("Error fetching data:", error);
+    }
+});
+
 </script>
 
 </body>
