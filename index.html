@@ -4,8 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js"></script>
-   
+   <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bcryptjs/2.4.3/bcrypt.min.js"></script>
   <title>Sign Up</title>
   <style>
     body {
@@ -95,22 +95,22 @@ const firebaseConfig = {
 // Initialize Firebase and Firestore
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 document.getElementById("signup-form").addEventListener("submit", async (event) => {
   event.preventDefault();
-
 
   const name = document.getElementById("name").value;
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
 
   try {
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10); // 10 is the salt rounds
 
     const userId = Date.now().toString(); // Unique user ID based on timestamp
     await setDoc(doc(db, "users", userId), {
       name: name,
       email: email,
-      password: password, // In production, passwords should never be stored in plain text!
+      password: hashedPassword, // Store the hashed password
     });
 
     alert("User registered successfully!");
