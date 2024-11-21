@@ -79,7 +79,7 @@
   </div>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-    import { getDatabase, ref, get } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAILpDXsC1r4eyntMwD5Z_gLS1Fwcym7Jk",
@@ -119,6 +119,8 @@
       console.error('Error saving data:', error);
     });
   });
+  console.log("Form submitted", { name, email, password });
+
 </script>
 
 </body>
