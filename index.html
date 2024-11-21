@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
    <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js"></script>
    
   <title>Sign Up</title>
   <style>
@@ -78,48 +78,48 @@
     <p>Already have an account? <a href="login.html">Log in</a></p>
   </div>
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
-    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyAILpDXsC1r4eyntMwD5Z_gLS1Fwcym7Jk",
-    authDomain: "serverproject-ae0e2.firebaseapp.com",
-    databaseURL: "https://serverproject-ae0e2.firebaseio.com",
-    projectId: "serverproject-ae0e2",
-    storageBucket: "serverproject-ae0e2.appspot.com",
-    messagingSenderId: "965856693540",
-    appId: "1:965856693540:web:b23fc93619880be1ddb7b1",
-    measurementId: "G-6TZ8PFNEYH"
-  };
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyAILpDXsC1r4eyntMwD5Z_gLS1Fwcym7Jk",
+  authDomain: "serverproject-ae0e2.firebaseapp.com",
+  projectId: "serverproject-ae0e2",
+  storageBucket: "serverproject-ae0e2.appspot.com",
+  messagingSenderId: "965856693540",
+  appId: "1:965856693540:web:b23fc93619880be1ddb7b1",
+  measurementId: "G-6TZ8PFNEYH",
+};
 
-  // Initialize Firebase
-  const app = initializeApp(firebaseConfig);
-  const database = getDatabase(app);
+// Initialize Firebase and Firestore
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
-  // Handle form submission
-  document.getElementById('signup-form').addEventListener('submit', function(event) {
-    event.preventDefault();
+document.getElementById("signup-form").addEventListener("submit", async (event) => {
+  event.preventDefault();
 
-    // Get input values
-    const name = document.getElementById('name').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
 
-    // Save data to Firebase Realtime Database
-    const userId = Date.now(); // Simple unique ID based on timestamp
-    set(ref(database, 'users/' + userId), {
+  const name = document.getElementById("name").value;
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  try {
+
+    const userId = Date.now().toString(); // Unique user ID based on timestamp
+    await setDoc(doc(db, "users", userId), {
       name: name,
       email: email,
-      password: password // Note: Do not store plain passwords in production!
-    }).then(() => {
-      alert('User registered successfully!');
-      // Redirect to login.html
-      window.location.href = 'login.html';
-    }).catch((error) => {
-      console.error('Error saving data:', error);
+      password: password, // In production, passwords should never be stored in plain text!
     });
-  });
-  console.log("Form submitted", { name, email, password });
+
+    alert("User registered successfully!");
+    window.location.href = "login.html";
+  } catch (error) {
+    console.error("Error adding user:", error);
+    alert("Error registering user. Please try again.");
+  }
+});
 
 </script>
 
